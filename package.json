@@ -1,0 +1,28 @@
+{
+  "name": "lithub-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LitHub Workspace (React + Fastify + Prisma + PostgreSQL)",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "postinstall": "npm run db:generate",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "dev:backend": "npm run dev --workspace=backend",
+    "dev": "concurrently \"npm run dev --workspace=backend\" \"npm run dev --workspace=frontend\"",
+    "build:frontend": "npm run build --workspace=frontend",
+    "build:backend": "npm run build --workspace=backend",
+    "build": "npm run build --workspace=backend && npm run build --workspace=frontend",
+    "db:up": "docker-compose -f backend/docker-compose.yml up -d",
+    "db:down": "docker-compose -f backend/docker-compose.yml down",
+    "db:generate": "npm run prisma:generate --workspace=backend",
+    "db:migrate": "npm run prisma:migrate --workspace=backend",
+    "db:seed": "npm run prisma:seed --workspace=backend",
+    "db:setup": "npm run db:up && npm run db:generate && npm run db:migrate && npm run db:seed"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

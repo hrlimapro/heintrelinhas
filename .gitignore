@@ -1,0 +1,29 @@
+# Node dependencies
+node_modules/
+**/node_modules/
+
+# Build directories
+dist/
+**/dist/
+build/
+**/build/
+
+# Environment files
+.env
+**/ .env
+.env*.local
+
+# Editor settings
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+
+# Docker and local database data
+pgdata/
+**/pgdata/
+lithub-postgres/
