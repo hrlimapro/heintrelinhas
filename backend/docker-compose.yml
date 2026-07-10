@@ -3,13 +3,13 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: lithub-postgres
+    container_name: heintrelinhas-postgres
     ports:
       - "5432:5432"
     environment:
       POSTGRES_USER: lit_admin
       POSTGRES_PASSWORD: lit_secure_pwd
-      POSTGRES_DB: lithub_db
+      POSTGRES_DB: heintrelinhas_db
     volumes:
       - pgdata:/var/lib/postgresql/data
 

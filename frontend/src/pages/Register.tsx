@@ -52,7 +52,7 @@ export const Register: React.FC = () => {
           </div>
           <h2 style={{ fontSize: '1.75rem', color: 'hsl(var(--text-primary))', marginBottom: '8px' }}>Criar Nova Conta</h2>
           <p style={{ fontSize: '0.9rem', color: 'hsl(var(--text-secondary))' }}>
-            Junte-se à comunidade do LitHub.
+            Junte-se à comunidade do heintrelinhas.
           </p>
         </div>
 

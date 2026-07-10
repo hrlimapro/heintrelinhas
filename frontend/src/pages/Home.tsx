@@ -251,7 +251,7 @@ export const Home: React.FC = () => {
             <h2>Participe do projeto</h2>
             <p>
               Tudo o que estiver aqui é lido pelo agente antes de responder. Adicione
-              documentos e textos literários para refinar a inteligência coletiva do LitHub.
+              documentos e textos literários para refinar a inteligência coletiva do heintrelinhas.
             </p>
             <Link to={user ? "/new-post" : "/login"} className="hero-cta-btn">
               <Plus size={16} />

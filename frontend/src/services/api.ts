@@ -10,7 +10,7 @@ export const api = axios.create({
 // Interceptor to inject JWT token in request headers
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('@LitHub:token');
+    const token = localStorage.getItem('@heintrelinhas:token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

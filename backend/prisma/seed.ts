@@ -21,7 +21,7 @@ async function main() {
   const admin = await prisma.user.create({
     data: {
       name: 'Henrique Administrador',
-      email: 'admin@lithub.com',
+      email: 'admin@heintrelinhas.com',
       passwordHash: adminPasswordHash,
       role: Role.ADMIN,
     },
@@ -31,7 +31,7 @@ async function main() {
   const editor = await prisma.user.create({
     data: {
       name: 'Paula Editora',
-      email: 'editor@lithub.com',
+      email: 'editor@heintrelinhas.com',
       passwordHash: editorPasswordHash,
       role: Role.EDITOR,
     },
@@ -41,16 +41,16 @@ async function main() {
   const writer = await prisma.user.create({
     data: {
       name: 'Carlos Escritor',
-      email: 'writer@lithub.com',
+      email: 'writer@heintrelinhas.com',
       passwordHash: writerPasswordHash,
       role: Role.WRITER,
     },
   });
 
   console.log(`✅ Usuários criados:
-    - Admin: admin@lithub.com / admin123
-    - Editor: editor@lithub.com / editor123
-    - Escritor: writer@lithub.com / writer123`);
+    - Admin: admin@heintrelinhas.com / admin123
+    - Editor: editor@heintrelinhas.com / editor123
+    - Escritor: writer@heintrelinhas.com / writer123`);
 
   // 3. Criar Categorias
   console.log('🏷️ Criando categorias...');

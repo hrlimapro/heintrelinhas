@@ -26,8 +26,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     function loadStorageData() {
-      const storagedToken = localStorage.getItem('@LitHub:token');
-      const storagedUser = localStorage.getItem('@LitHub:user');
+      const storagedToken = localStorage.getItem('@heintrelinhas:token');
+      const storagedUser = localStorage.getItem('@heintrelinhas:user');
 
       if (storagedToken && storagedUser) {
         setToken(storagedToken);
@@ -43,8 +43,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const response = await api.post('/api/auth/login', { email, password });
     const { token: jwtToken, user: userProfile } = response.data;
 
-    localStorage.setItem('@LitHub:token', jwtToken);
-    localStorage.setItem('@LitHub:user', JSON.stringify(userProfile));
+    localStorage.setItem('@heintrelinhas:token', jwtToken);
+    localStorage.setItem('@heintrelinhas:user', JSON.stringify(userProfile));
 
     setToken(jwtToken);
     setUser(userProfile);
@@ -55,8 +55,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = () => {
-    localStorage.removeItem('@LitHub:token');
-    localStorage.removeItem('@LitHub:user');
+    localStorage.removeItem('@heintrelinhas:token');
+    localStorage.removeItem('@heintrelinhas:user');
     setToken(null);
     setUser(null);
   };

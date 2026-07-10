@@ -1,8 +1,8 @@
 {
-  "name": "lithub-workspace",
+  "name": "heintrelinhas-workspace",
   "version": "1.0.0",
   "private": true,
-  "description": "LitHub Workspace (React + Fastify + Prisma + PostgreSQL)",
+  "description": "heintrelinhas Workspace (React + Fastify + Prisma + PostgreSQL)",
   "workspaces": [
     "frontend",
     "backend"

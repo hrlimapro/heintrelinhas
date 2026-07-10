@@ -1,7 +1,7 @@
 {
-  "name": "antigravity-literario-backend",
+  "name": "heintrelinhas-backend",
   "version": "1.0.0",
-  "description": "Backend API for Antigravity Literário using Fastify, Prisma, PostgreSQL and TypeScript",
+  "description": "Backend API for heintrelinhas using Fastify, Prisma, PostgreSQL and TypeScript",
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",

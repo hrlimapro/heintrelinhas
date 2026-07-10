@@ -1,6 +1,6 @@
-# 🚀 LitHub — Plataforma de Publicação Literária e Artigos
+# 🚀 heintrelinhas — Plataforma de Publicação Literária e Artigos
 
-O **LitHub** (ou *Antigravity Literário*) é uma aplicação web completa (Full Stack) para publicação, gerenciamento e leitura de posts e artigos. A plataforma conta com diferentes níveis de acesso (Escritores, Editores e Administradores) e um design moderno com tema escuro e efeitos em neon.
+O **heintrelinhas** é uma aplicação web completa (Full Stack) para publicação, gerenciamento e leitura de posts e artigos. A plataforma conta com diferentes níveis de acesso (Escritores, Editores e Administradores) e um design moderno com tema escuro e efeitos em neon.
 
 Este repositório está configurado como um **Workspace NPM**, integrando o frontend e o backend em um único fluxo de desenvolvimento simplificado.
 
@@ -10,8 +10,8 @@ Este repositório está configurado como um **Workspace NPM**, integrando o fron
 
 O repositório é composto por dois módulos principais:
 
-*   **[`backend/`](file:///c:/Users/Henrique/Desktop/LitHub/backend)**: Servidor de API construído com **Fastify**, **TypeScript**, **Zod** para validação e **Prisma ORM** integrado com banco de dados **PostgreSQL**.
-*   **[`frontend/`](file:///c:/Users/Henrique/Desktop/LitHub/frontend)**: Aplicativo do lado do cliente construído com **React**, **Vite**, **React Router**, **Axios** e estilizado com **Vanilla CSS** moderno (variáveis HSL customizadas).
+*   **[`backend/`](file:///c:/Users/Henrique/Desktop/Heintrelinhas/backend)**: Servidor de API construído com **Fastify**, **TypeScript**, **Zod** para validação e **Prisma ORM** integrado com banco de dados **PostgreSQL**.
+*   **[`frontend/`](file:///c:/Users/Henrique/Desktop/Heintrelinhas/frontend)**: Aplicativo do lado do cliente construído com **React**, **Vite**, **React Router**, **Axios** e estilizado com **Vanilla CSS** moderno (variáveis HSL customizadas).
 
 ---
 
@@ -48,10 +48,10 @@ npm run db:up
 #### 💡 Alternativa sem Docker:
 Caso não use ou não tenha o Docker instalado:
 1. Instale o **PostgreSQL** localmente em sua máquina.
-2. Crie um banco de dados chamado `lithub_db`.
-3. Abra o arquivo [`backend/.env`](file:///c:/Users/Henrique/Desktop/LitHub/backend/.env) e ajuste a variável `DATABASE_URL` com o seu usuário e senha local do PostgreSQL. Exemplo:
+2. Crie um banco de dados chamado `heintrelinhas_db`.
+3. Abra o arquivo [`backend/.env`](file:///c:/Users/Henrique/Desktop/Heintrelinhas/backend/.env) e ajuste a variável `DATABASE_URL` com o seu usuário e senha local do PostgreSQL. Exemplo:
    ```env
-   DATABASE_URL="postgresql://seu_usuario:sua_senha@localhost:5432/lithub_db?schema=public"
+   DATABASE_URL="postgresql://seu_usuario:sua_senha@localhost:5432/heintrelinhas_db?schema=public"
    ```
 
 ### 3. Executar as Migrações e Alimentar o Banco (Seed)
@@ -86,9 +86,9 @@ Após rodar o script de seed (`npm run db:seed`), você poderá acessar a plataf
 
 | Função | E-mail | Senha | Permissões |
 | :--- | :--- | :--- | :--- |
-| **ADMIN** | `admin@lithub.com` | `admin123` | Acesso total, gerenciamento de posts, categorias e tags. |
-| **EDITOR** | `editor@lithub.com` | `editor123` | Revisar posts pendentes e gerenciar tags/categorias. |
-| **WRITER** | `writer@lithub.com` | `writer123` | Criar e editar seus próprios posts (salvar como rascunho ou enviar para revisão). |
+| **ADMIN** | `admin@heintrelinhas.com` | `admin123` | Acesso total, gerenciamento de posts, categorias e tags. |
+| **EDITOR** | `editor@heintrelinhas.com` | `editor123` | Revisar posts pendentes e gerenciar tags/categorias. |
+| **WRITER** | `writer@heintrelinhas.com` | `writer123` | Criar e editar seus próprios posts (salvar como rascunho ou enviar para revisão). |
 
 ---
 
