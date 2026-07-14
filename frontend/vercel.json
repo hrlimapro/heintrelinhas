@@ -1,5 +1,5 @@
 {
-  "installCommand": "npm install --force",
+  "installCommand": "rm -f ../package-lock.json && npm install",
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }
   ]

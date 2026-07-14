@@ -8,6 +8,10 @@ dist/
 build/
 **/build/
 
+# Lock files (gerados por plataforma, não devem ser compartilhados em monorepo cross-platform)
+package-lock.json
+**/package-lock.json
+
 # Environment files
 .env
 **/ .env
