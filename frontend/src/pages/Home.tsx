@@ -1,3 +1,8 @@
+// Página inicial: lista as publicações em um layout de "workspace" com três áreas:
+// sidebar de filtros (busca, categorias, tags e — para logados — status),
+// destaque das 4 publicações mais recentes em formato de "pastas" e a lista
+// completa de textos com ordenação. Os filtros de categoria/tag/status são
+// enviados à API (server-side); a busca textual e a ordenação são client-side.
 import React, { useEffect, useState } from 'react';
 import { api } from '../services/api.js';
 import { Link } from 'react-router-dom';
@@ -64,6 +69,7 @@ export const Home: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState('');
   const [sortBy, setSortBy] = useState<'date' | 'title' | 'readingTime'>('date');
 
+  // Carrega categorias e tags em paralelo para montar a sidebar de filtros.
   const fetchFilters = async () => {
     try {
       const [categoriesRes, tagsRes] = await Promise.all([
@@ -87,8 +93,10 @@ export const Home: React.FC = () => {
       if (selectedStatus) params.status = selectedStatus;
 
       const response = await api.get('/api/posts', { params });
-      
+
       // Client-side text filter for search query (on title / summary)
+      // A API não possui busca textual, então o filtro por título/resumo
+      // é aplicado aqui, sobre o resultado já filtrado pelo servidor.
       let data = response.data;
       if (search.trim()) {
         const query = search.toLowerCase();
@@ -111,6 +119,8 @@ export const Home: React.FC = () => {
     fetchFilters();
   }, []);
 
+  // Rebusca os posts sempre que qualquer filtro muda (inclusive a busca textual,
+  // que refaz a chamada mesmo sendo filtrada no cliente).
   useEffect(() => {
     fetchPosts();
   }, [selectedCategory, selectedTag, selectedStatus, search]);
@@ -127,6 +137,8 @@ export const Home: React.FC = () => {
   const recentPosts = posts.slice(0, 4);
 
   // Sort posts for the list below
+  // Ordenação client-side (data, título ou tempo de leitura). Para a data,
+  // usa publishedAt quando existe e cai para createdAt em rascunhos.
   const sortedPosts = [...posts].sort((a, b) => {
     if (sortBy === 'title') {
       return a.title.localeCompare(b.title);

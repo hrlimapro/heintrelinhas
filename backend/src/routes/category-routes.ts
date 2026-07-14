@@ -1,3 +1,6 @@
+// Rotas de categorias (prefixo /api/categories).
+// Leitura pública; criação/edição/exclusão restritas a ADMIN e EDITOR via
+// combinação dos middlewares verifyJWT (autenticação) + verifyUserRole (autorização).
 import { FastifyInstance } from 'fastify';
 import {
   createCategory,

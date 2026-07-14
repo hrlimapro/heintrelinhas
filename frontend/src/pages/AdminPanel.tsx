@@ -1,3 +1,8 @@
+// Painel administrativo (rota /admin, restrita a ADMIN/EDITOR pelo PrivateRoute):
+// CRUD inline de categorias e tags em duas seções lado a lado. Cada seção usa o
+// mesmo formulário para criar e editar — quando um "editingId" está definido,
+// o submit faz PUT em vez de POST. As listas locais são atualizadas de forma
+// otimista com a resposta da API (sem refetch completo).
 import React, { useEffect, useState } from 'react';
 import { api } from '../services/api.js';
 import { Settings, Plus, Edit, Trash2, X, Check, Tag as TagIcon, Folder, AlertTriangle } from 'lucide-react';
@@ -54,6 +59,7 @@ export const AdminPanel: React.FC = () => {
   }, []);
 
   // Category Actions
+  // Cria ou atualiza conforme haja um editingCatId ativo; mantém a lista ordenada.
   const handleSaveCategory = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!catName.trim()) return;
@@ -78,6 +84,8 @@ export const AdminPanel: React.FC = () => {
     }
   };
 
+  // A API retorna 400 se a categoria tiver posts vinculados (onDelete: Restrict);
+  // a mensagem de erro do backend é exibida no alerta da página.
   const handleDeleteCategory = async (id: string) => {
     if (!window.confirm('Excluir esta categoria?')) return;
     setError(null);

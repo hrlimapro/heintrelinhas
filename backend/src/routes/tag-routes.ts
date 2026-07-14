@@ -1,3 +1,5 @@
+// Rotas de tags (prefixo /api/tags). Espelha a estrutura das categorias:
+// leitura pública, escrita restrita a ADMIN e EDITOR.
 import { FastifyInstance } from 'fastify';
 import {
   createTag,

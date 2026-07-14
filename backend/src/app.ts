@@ -1,3 +1,6 @@
+// Montagem da aplicação Fastify: plugins (CORS, JWT), registro das rotas por
+// recurso (com prefixo /api/*) e tratador global de erros. O servidor em si é
+// iniciado em server.ts, o que permite importar `app` em testes sem abrir porta.
 import fastify from 'fastify';
 import cors from '@fastify/cors';
 import jwt from '@fastify/jwt';
@@ -16,6 +19,8 @@ app.register(cors, {
 });
 
 // Configure JWT
+// Falha rápido na inicialização se o segredo do JWT não estiver definido —
+// melhor que descobrir em runtime ao assinar/verificar tokens.
 if (!process.env.JWT_SECRET) {
   throw new Error('JWT_SECRET must be defined in environmental variables.');
 }
@@ -31,6 +36,8 @@ app.register(tagRoutes, { prefix: '/api/tags' });
 app.register(postRoutes, { prefix: '/api/posts' });
 
 // Global error handler
+// Erros com statusCode (ex.: lançados pelo Fastify/plugins) mantêm o status original;
+// qualquer outro erro inesperado vira 500 genérico (sem vazar detalhes internos).
 app.setErrorHandler((error, _, reply) => {
   if (error.statusCode) {
     return reply.status(error.statusCode).send({ message: error.message });

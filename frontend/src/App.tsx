@@ -1,3 +1,5 @@
+// Raiz da SPA: define o roteamento (react-router) e envolve tudo no AuthProvider
+// e no Layout (shell visual comum). Rotas sensíveis usam o guard PrivateRoute.
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext.js';
@@ -11,6 +13,10 @@ import { PostDetails } from './pages/PostDetails.js';
 import { PostEditor } from './pages/PostEditor.js';
 import { AdminPanel } from './pages/AdminPanel.js';
 
+// Guard de rota: exige usuário autenticado e, opcionalmente, um papel permitido.
+// Enquanto o AuthContext restaura a sessão do localStorage, mostra "Carregando..."
+// (sem isso, o usuário logado seria redirecionado para /login em todo refresh).
+// Importante: isso é apenas UX — a autorização real é feita pelo backend.
 const PrivateRoute: React.FC<{ children: React.ReactNode; allowedRoles?: ('WRITER' | 'EDITOR' | 'ADMIN')[] }> = ({
   children,
   allowedRoles,

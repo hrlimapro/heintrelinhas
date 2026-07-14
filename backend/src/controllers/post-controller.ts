@@ -1,14 +1,25 @@
+// Controller de posts — o coração do fluxo editorial da plataforma.
+// Regras principais implementadas aqui:
+// - WRITER só manipula os próprios posts e não pode usar status PUBLISHED/REJECTED;
+// - EDITOR/ADMIN têm acesso total (publicar, rejeitar, editar posts de terceiros);
+// - Rotas de leitura são públicas, mas com visibilidade condicionada ao papel
+//   (JWT decodificado de forma opcional);
+// - Slug único gerado do título e tempo de leitura calculado do conteúdo.
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { prisma } from '../lib/prisma.js';
 import { createPostBodySchema, updatePostBodySchema, updatePostStatusBodySchema } from '../schemas/post-schemas.js';
 import { slugify } from '../utils/slugify.js';
 
+// Estima o tempo de leitura em minutos assumindo ~200 palavras por minuto.
+// Sempre retorna no mínimo 1 minuto.
 function calculateReadingTime(content: string): number {
   const words = content.trim().split(/\s+/);
   const wordCount = words.length;
   return Math.max(1, Math.ceil(wordCount / 200));
 }
 
+// Gera um slug único a partir do título: se "meu-titulo" já existir no banco,
+// tenta "meu-titulo-1", "meu-titulo-2"... até encontrar um livre.
 async function generateUniquePostSlug(title: string): Promise<string> {
   const baseSlug = slugify(title);
   let slug = baseSlug;
@@ -34,6 +45,7 @@ export async function createPost(request: FastifyRequest, reply: FastifyReply) {
     const userRole = request.user.role;
 
     // Check if WRITER is trying to publish directly
+    // Regra editorial: escritor não publica nem rejeita — precisa passar pela revisão.
     if (userRole === 'WRITER' && (status === 'PUBLISHED' || status === 'REJECTED')) {
       return reply.status(403).send({ message: 'Apenas editores ou administradores podem publicar posts.' });
     }
@@ -58,6 +70,8 @@ export async function createPost(request: FastifyRequest, reply: FastifyReply) {
       }
     }
 
+    // Slug sempre gerado no servidor; readingTime é calculado do conteúdo
+    // apenas quando o cliente não informa um valor manual.
     const slug = await generateUniquePostSlug(title);
     const finalReadingTime = readingTime ?? calculateReadingTime(content);
 
@@ -74,6 +88,7 @@ export async function createPost(request: FastifyRequest, reply: FastifyReply) {
         tags: {
           connect: tagIds.map((id) => ({ id })),
         },
+        // publishedAt só é preenchido se o post já nasce publicado (EDITOR/ADMIN).
         publishedAt: status === 'PUBLISHED' ? new Date() : null,
       },
       include: {
@@ -97,6 +112,9 @@ export async function createPost(request: FastifyRequest, reply: FastifyReply) {
 export async function listPosts(request: FastifyRequest, reply: FastifyReply) {
   try {
     // Manually verify JWT optional authentication to implement visibility rules
+    // "Autenticação opcional": a rota é pública, mas se houver um token válido,
+    // request.user é populado e libera visibilidade extra. Token inválido é
+    // silenciosamente ignorado — o cliente é tratado como visitante anônimo.
     if (request.headers.authorization) {
       try {
         await request.jwtVerify();
@@ -115,6 +133,8 @@ export async function listPosts(request: FastifyRequest, reply: FastifyReply) {
     const where: any = {};
 
     // 1. Visibility rules
+    // Anônimo: só posts publicados. WRITER: publicados OU de sua autoria
+    // (qualquer status). EDITOR/ADMIN: sem restrição (precisam revisar tudo).
     if (!request.user) {
       where.status = 'PUBLISHED';
     } else {
@@ -144,6 +164,9 @@ export async function listPosts(request: FastifyRequest, reply: FastifyReply) {
     }
 
     // Apply specific status filter with permission check
+    // Lógica delicada: quando um WRITER filtra por status não-publicado, o filtro
+    // OR de visibilidade é substituído por (status + authorId) — ele só pode ver
+    // rascunhos/pendentes que sejam dele. Cuidado ao alterar este bloco.
     if (status) {
       if (!request.user) {
         where.status = 'PUBLISHED';
@@ -191,6 +214,8 @@ export async function getPost(request: FastifyRequest, reply: FastifyReply) {
       }
     }
 
+    // O parâmetro aceita tanto o id (UUID) quanto o slug do post: se o valor
+    // casa com o formato de UUID, busca por id; caso contrário, busca por slug.
     const { idOrSlug } = request.params as { idOrSlug: string };
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug);
 
@@ -210,6 +235,7 @@ export async function getPost(request: FastifyRequest, reply: FastifyReply) {
     }
 
     // Visibility rules check
+    // Post não publicado só é visível para o autor (se WRITER) ou EDITOR/ADMIN.
     if (post.status !== 'PUBLISHED') {
       if (!request.user) {
         return reply.status(403).send({ message: 'Você não tem permissão para visualizar esta publicação.' });
@@ -250,6 +276,8 @@ export async function updatePost(request: FastifyRequest, reply: FastifyReply) {
 
     const updateData: any = {};
 
+    // Atualização parcial: só entra em updateData o que veio no body.
+    // Se o título mudou, um novo slug é gerado (links antigos deixam de funcionar).
     if (title !== undefined) {
       updateData.title = title;
       if (title !== post.title) {
@@ -263,6 +291,7 @@ export async function updatePost(request: FastifyRequest, reply: FastifyReply) {
 
     if (content !== undefined) {
       updateData.content = content;
+      // Conteúdo mudou sem readingTime explícito ⇒ recalcula automaticamente.
       if (readingTime === undefined) {
         updateData.readingTime = calculateReadingTime(content);
       }
@@ -291,6 +320,8 @@ export async function updatePost(request: FastifyRequest, reply: FastifyReply) {
           return reply.status(400).send({ message: 'Uma ou mais tags fornecidas não existem.' });
         }
       }
+      // "set" substitui TODO o conjunto de tags do post pelo array recebido
+      // (diferente de "connect", que apenas adiciona).
       updateData.tags = {
         set: tagIds.map((id) => ({ id })),
       };
@@ -301,6 +332,8 @@ export async function updatePost(request: FastifyRequest, reply: FastifyReply) {
         return reply.status(403).send({ message: 'Apenas editores ou administradores podem publicar posts.' });
       }
       updateData.status = status;
+      // Marca a data de publicação apenas na transição para PUBLISHED
+      // (republicar um post já publicado não sobrescreve a data original).
       if (status === 'PUBLISHED' && post.status !== 'PUBLISHED') {
         updateData.publishedAt = new Date();
       }
@@ -356,6 +389,8 @@ export async function deletePost(request: FastifyRequest, reply: FastifyReply) {
   }
 }
 
+// Rota dedicada do fluxo editorial (PATCH /:id/status): muda apenas o status.
+// Usada pelos botões "Enviar para Revisão" (WRITER) e "Aprovar/Rejeitar" (EDITOR/ADMIN).
 export async function updatePostStatus(request: FastifyRequest, reply: FastifyReply) {
   try {
     const { id } = request.params as { id: string };
@@ -386,6 +421,7 @@ export async function updatePostStatus(request: FastifyRequest, reply: FastifyRe
       where: { id },
       data: {
         status,
+        // Preserva o publishedAt original; só define na primeira publicação.
         publishedAt: status === 'PUBLISHED' && post.status !== 'PUBLISHED' ? new Date() : post.publishedAt,
       },
       include: {

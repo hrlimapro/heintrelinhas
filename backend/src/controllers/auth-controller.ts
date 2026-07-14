@@ -1,3 +1,6 @@
+// Controller de autenticação: cadastro (register) e login.
+// A senha nunca é armazenada em texto puro — apenas o hash bcrypt vai para o banco,
+// e o hash nunca é retornado nas respostas da API.
 import { FastifyRequest, FastifyReply } from 'fastify';
 import bcrypt from 'bcryptjs';
 import { prisma } from '../lib/prisma.js';
@@ -15,6 +18,7 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
       return reply.status(409).send({ message: 'E-mail já cadastrado.' });
     }
 
+    // Fator de custo 8 do bcrypt: equilíbrio entre segurança e velocidade para o projeto.
     const passwordHash = await bcrypt.hash(password, 8);
 
     const user = await prisma.user.create({
@@ -51,6 +55,8 @@ export async function login(request: FastifyRequest, reply: FastifyReply) {
       where: { email },
     });
 
+    // Mensagem genérica proposital ("Credenciais inválidas") tanto para e-mail
+    // inexistente quanto para senha errada — evita enumeração de e-mails cadastrados.
     if (!user) {
       return reply.status(401).send({ message: 'Credenciais inválidas.' });
     }
@@ -61,6 +67,8 @@ export async function login(request: FastifyRequest, reply: FastifyReply) {
       return reply.status(401).send({ message: 'Credenciais inválidas.' });
     }
 
+    // Gera o JWT: o payload carrega o papel (role) para o RBAC e o claim padrão
+    // "sub" carrega o id do usuário. Validade de 7 dias; não há refresh token.
     const token = await reply.jwtSign(
       { role: user.role },
       { sign: { sub: user.id, expiresIn: '7d' } }

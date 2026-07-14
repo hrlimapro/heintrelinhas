@@ -1,3 +1,10 @@
+// Shell visual da aplicação, presente em todas as páginas. Composto por:
+// 1) sidebar esquerda de navegação (links condicionais ao papel do usuário);
+// 2) área principal com header (título, botões de auth, toggle do Copilot);
+// 3) sidebar direita retrátil com o "Copilot" — um chat de IA SIMULADO,
+//    cujas respostas são fixas e escolhidas por palavras-chave (não há LLM real).
+// Também gerencia o tema claro/escuro (classe "dark-theme" no <html> +
+// persistência no localStorage).
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext.js';
@@ -37,6 +44,8 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   const [isCopilotOpen, setIsCopilotOpen] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
+  // Aplica o tema alternando a classe global no <html> — os arquivos CSS trocam
+  // as variáveis de cor com base nessa classe. A escolha é persistida.
   useEffect(() => {
     if (theme === 'dark') {
       document.documentElement.classList.add('dark-theme');
@@ -83,6 +92,8 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     setIsTyping(true);
 
     // Mock AI responses based on keywords
+    // O setTimeout de 800ms simula a latência de "digitação" de uma IA real;
+    // a resposta é apenas texto fixo escolhido pelas palavras-chave da pergunta.
     setTimeout(() => {
       let replyText = 'Entendi! Atualmente o heintrelinhas conta com seções de Tecnologia, Literatura, Ciência, Design e Filosofia. Você pode publicar novos textos se cadastrando como autor.';
       
@@ -107,6 +118,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     }, 800);
   };
 
+  // Extrai as iniciais do nome para o avatar do usuário (ex.: "Ana Souza" -> "AS").
   const getInitials = (name: string) => {
     const parts = name.split(' ');
     if (parts.length >= 2) {

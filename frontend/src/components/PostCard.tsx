@@ -1,3 +1,6 @@
+// Card de apresentação de um post: capa colorida em gradiente, categoria,
+// badge de status (apenas quando não publicado), resumo, tags, autor e metadados.
+// O link usa o slug do post (rota /posts/:idOrSlug).
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Clock, User, ArrowUpRight } from 'lucide-react';
@@ -61,6 +64,8 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
   };
 
   // Select a random cover color based on post ID to make it colorful
+  // "Aleatório determinístico": a soma dos char codes do id escolhe o gradiente,
+  // então o mesmo post sempre exibe a mesma capa entre renderizações.
   const getCoverGradient = (id: string) => {
     const gradients = [
       'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)', // Indigo to Violet

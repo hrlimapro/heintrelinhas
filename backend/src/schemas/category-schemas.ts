@@ -1,3 +1,5 @@
+// Schemas Zod das rotas de categorias. Apenas o nome é recebido do cliente;
+// o slug é sempre gerado no servidor (controller) para garantir unicidade.
 import { z } from 'zod';
 
 export const createCategoryBodySchema = z.object({

@@ -1,3 +1,6 @@
+// Página de login: formulário controlado que delega a autenticação ao
+// signIn do AuthContext (POST /api/auth/login) e redireciona para a Home.
+// Erros da API (ex.: credenciais inválidas) são exibidos em um alerta no card.
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext.js';

@@ -1,8 +1,12 @@
+// Controller de tags: CRUD idêntico em estrutura ao de categorias.
+// Diferença importante: tags podem ser excluídas mesmo com posts vinculados
+// (a relação N:N é apenas desfeita, sem restrição de FK).
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { prisma } from '../lib/prisma.js';
 import { createTagBodySchema, updateTagBodySchema } from '../schemas/tag-schemas.js';
 import { slugify } from '../utils/slugify.js';
 
+// Gera slug único: em caso de colisão, adiciona sufixo numérico incremental.
 async function generateUniqueTagSlug(name: string): Promise<string> {
   const baseSlug = slugify(name);
   let slug = baseSlug;

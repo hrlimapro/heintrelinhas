@@ -1,3 +1,8 @@
+// Rotas de posts (prefixo /api/posts). As rotas de leitura são públicas, porém o
+// controller decodifica o JWT opcionalmente para aplicar regras de visibilidade
+// (anônimo vê só PUBLISHED; WRITER vê também os próprios; EDITOR/ADMIN veem tudo).
+// As rotas de escrita exigem JWT; a autorização fina (dono do post, restrições de
+// status por papel) fica dentro do controller.
 import { FastifyInstance } from 'fastify';
 import {
   createPost,

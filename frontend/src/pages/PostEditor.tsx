@@ -1,3 +1,9 @@
+// Editor de posts — um único componente para dois modos, decididos pela URL:
+// /new-post (criação, POST /api/posts) e /edit-post/:id (edição, PUT /api/posts/:id).
+// Carrega categorias e tags para os seletores; WRITER só enxerga as opções de
+// status DRAFT e PENDING_REVIEW (PUBLISHED/REJECTED aparecem apenas para
+// EDITOR/ADMIN, espelhando a regra do backend). Após salvar, navega para o
+// post usando o slug retornado pela API.
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { api } from '../services/api.js';
@@ -60,6 +66,8 @@ export const PostEditor: React.FC = () => {
       const post = response.data;
 
       // Access checks
+      // WRITER tentando editar post de outro autor é devolvido para a Home
+      // (o backend também bloquearia a gravação com 403).
       if (user && user.role === 'WRITER' && post.authorId !== user.id) {
         navigate('/');
         return;
@@ -90,6 +98,7 @@ export const PostEditor: React.FC = () => {
     }
   }, [id]);
 
+  // Alterna a seleção de uma tag (adiciona se ausente, remove se presente).
   const handleTagToggle = (tagId: string) => {
     setSelectedTagIds((prev) =>
       prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]
@@ -111,6 +120,7 @@ export const PostEditor: React.FC = () => {
       title,
       summary,
       content,
+      // Campo vazio vira undefined para o backend calcular o tempo automaticamente.
       readingTime: readingTime === '' ? undefined : Number(readingTime),
       categoryId,
       tagIds: selectedTagIds,

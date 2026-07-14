@@ -1,8 +1,11 @@
+// Controller de categorias: CRUD simples com geração de slug único.
+// A escrita é restrita a ADMIN/EDITOR (garantido pelos middlewares na rota).
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { prisma } from '../lib/prisma.js';
 import { createCategoryBodySchema, updateCategoryBodySchema } from '../schemas/category-schemas.js';
 import { slugify } from '../utils/slugify.js';
 
+// Gera slug único: em caso de colisão, adiciona sufixo numérico incremental.
 async function generateUniqueCategorySlug(name: string): Promise<string> {
   const baseSlug = slugify(name);
   let slug = baseSlug;
@@ -121,6 +124,8 @@ export async function deleteCategory(request: FastifyRequest, reply: FastifyRepl
     }
 
     // Check if category has associated posts (onDelete: Restrict)
+    // Verificação prévia para retornar um 400 com mensagem amigável em vez de
+    // deixar o banco rejeitar a exclusão pela FK (onDelete: Restrict no schema).
     const postsCount = await prisma.post.count({
       where: { categoryId: id },
     });

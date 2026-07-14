@@ -1,3 +1,7 @@
+// Script de seed: popula o banco com dados de demonstração.
+// ATENÇÃO: é DESTRUTIVO — apaga todos os registros antes de recriar.
+// Cria 3 usuários de teste (um por papel), 5 categorias, 6 tags e 4 posts
+// em diferentes estágios do fluxo editorial. Rodar com `npm run db:seed`.
 import { PrismaClient, Role, PostStatus } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
@@ -7,6 +11,7 @@ async function main() {
   console.log('🌱 Iniciando semeadura do banco de dados (seed)...');
 
   // 1. Limpar banco de dados existente respeitando chaves estrangeiras
+  // A ordem importa: posts primeiro (dependem de user/category/tag), depois o resto.
   console.log('🧹 Limpando dados antigos...');
   await prisma.post.deleteMany();
   await prisma.tag.deleteMany();

@@ -1,3 +1,5 @@
+// Rotas de autenticação (prefixo /api/auth registrado em app.ts).
+// Ambas são públicas: cadastro e login não exigem token.
 import { FastifyInstance } from 'fastify';
 import { register, login } from '../controllers/auth-controller.js';
 

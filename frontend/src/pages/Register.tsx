@@ -1,3 +1,8 @@
+// Página de cadastro: cria a conta via signUp do AuthContext
+// (POST /api/auth/register) e, em caso de sucesso, exibe confirmação e
+// redireciona para /login após 2s (o cadastro NÃO autentica automaticamente).
+// Observação: o seletor de "Nível de Acesso" permite escolher qualquer papel,
+// inclusive ADMIN — comportamento intencional apenas para fins de demonstração.
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext.js';

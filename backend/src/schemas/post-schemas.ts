@@ -1,3 +1,7 @@
+// Schemas Zod para validação dos bodies das rotas de posts.
+// - create: campos obrigatórios; readingTime opcional (calculado no controller se ausente).
+// - update: todos os campos opcionais (atualização parcial via PUT).
+// - status: usado pelo PATCH /:id/status do fluxo editorial.
 import { z } from 'zod';
 
 export const createPostBodySchema = z.object({

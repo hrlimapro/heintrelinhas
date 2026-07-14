@@ -1,3 +1,9 @@
+// Página de leitura de um post (rota /posts/:idOrSlug — aceita id ou slug).
+// Além do conteúdo, concentra as ações do fluxo editorial conforme o papel:
+// - autor ou EDITOR/ADMIN: editar e excluir;
+// - EDITOR/ADMIN: aprovar/publicar, rejeitar ou devolver para revisão;
+// - autor WRITER com rascunho: enviar para revisão (PENDING_REVIEW).
+// Todas as mudanças de status usam PATCH /api/posts/:id/status.
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { api } from '../services/api.js';
@@ -115,6 +121,8 @@ export const PostDetails: React.FC = () => {
     });
   };
 
+  // Flags de permissão que controlam quais botões de ação são exibidos.
+  // Espelham as regras do backend (que continua sendo a autoridade final).
   const isAuthor = user && user.id === post.author.id;
   const isEditorOrAdmin = user && (user.role === 'EDITOR' || user.role === 'ADMIN');
   const canModify = isAuthor || isEditorOrAdmin;
@@ -215,6 +223,8 @@ export const PostDetails: React.FC = () => {
           color: 'hsl(var(--text-secondary))',
           marginBottom: '40px' 
         }}>
+          {/* O conteúdo é texto puro: cada quebra de linha vira um parágrafo
+              (linhas vazias são descartadas). Não há suporte a Markdown/HTML. */}
           {post.content.split('\n').map((paragraph, index) => {
             if (!paragraph.trim()) return null;
             return <p key={index} style={{ marginBottom: '24px' }}>{paragraph}</p>;

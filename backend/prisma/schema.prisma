@@ -1,3 +1,7 @@
+// Schema do banco de dados (Prisma + PostgreSQL).
+// Modelos: User (1:N Post), Post (N:1 Category, N:N Tag), Category e Tag.
+// A conexão vem da env var DATABASE_URL (backend/.env).
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -7,12 +11,17 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// Papéis de acesso (RBAC):
+// WRITER cria/edita os próprios posts; EDITOR revisa/publica e gerencia taxonomias;
+// ADMIN tem controle total.
 enum Role {
   WRITER
   EDITOR
   ADMIN
 }
 
+// Ciclo de vida editorial do post:
+// DRAFT -> PENDING_REVIEW -> PUBLISHED ou REJECTED.
 enum PostStatus {
   DRAFT
   PENDING_REVIEW
@@ -44,12 +53,15 @@ model Post {
   updatedAt   DateTime   @updatedAt
   publishedAt DateTime?
 
+  // Excluir o usuário apaga em cascata todos os seus posts.
   authorId    String
   author      User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
+  // Restrict: uma categoria com posts vinculados não pode ser excluída.
   categoryId  String
   category    Category   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
 
+  // Relação N:N implícita (o Prisma cria a tabela de junção automaticamente).
   tags        Tag[]
 
   @@map("posts")

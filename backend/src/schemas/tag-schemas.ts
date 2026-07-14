@@ -1,3 +1,5 @@
+// Schemas Zod das rotas de tags. Assim como nas categorias, o cliente envia
+// apenas o nome; o slug único é responsabilidade do controller.
 import { z } from 'zod';
 
 export const createTagBodySchema = z.object({
