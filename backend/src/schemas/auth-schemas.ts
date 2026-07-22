@@ -2,13 +2,12 @@
 // As mensagens de erro são em português e retornadas ao cliente em falhas 400.
 import { z } from 'zod';
 
-// Cadastro: o papel (role) é opcional e assume WRITER por padrão.
-// Atenção: aceitar role no cadastro é adequado apenas para demonstração.
+// Cadastro público: todo novo usuário nasce WRITER (o campo role não é aceito
+// no body). Contas EDITOR/ADMIN vêm do seed ou de promoção direta no banco.
 export const registerBodySchema = z.object({
   name: z.string().min(3, 'O nome deve ter pelo menos 3 caracteres'),
   email: z.string().email('E-mail inválido'),
   password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
-  role: z.enum(['WRITER', 'EDITOR', 'ADMIN']).default('WRITER'),
 });
 
 export const loginBodySchema = z.object({

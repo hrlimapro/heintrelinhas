@@ -48,7 +48,7 @@ export const Login: React.FC = () => {
           </div>
           <h2 style={{ fontSize: '1.75rem', color: 'hsl(var(--text-primary))', marginBottom: '8px' }}>Acesse sua Conta</h2>
           <p style={{ fontSize: '0.9rem', color: 'hsl(var(--text-secondary))' }}>
-            Seja bem-vindo de volta ao portal heintrelinhas.
+            Seja bem-vindo de volta ao portal EnterLinhas.
           </p>
         </div>
 

@@ -159,7 +159,7 @@ export const AdminPanel: React.FC = () => {
         <div>
           <h2 style={{ fontSize: '1.75rem', color: 'hsl(var(--text-primary))' }}>Painel Administrativo</h2>
           <p style={{ fontSize: '0.85rem', color: 'hsl(var(--text-secondary))' }}>
-            Gerencie as categorias e tags da plataforma heintrelinhas.
+            Gerencie as categorias e tags da plataforma EnterLinhas.
           </p>
         </div>
       </div>

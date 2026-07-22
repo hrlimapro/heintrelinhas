@@ -1,10 +1,10 @@
-# CLAUDE.md — heintrelinhas
+# CLAUDE.md — EnterLinhas
 
 Guia do projeto para agentes de IA e desenvolvedores. Tudo em português do Brasil.
 
 ## 1. Visão geral
 
-O **heintrelinhas** é uma plataforma fullstack de publicação colaborativa de posts/artigos (blog literário e de artigos) com fluxo editorial: **escritores** criam rascunhos e enviam para revisão, **editores** aprovam/rejeitam/publicam, e **administradores** têm controle total (incluindo taxonomias). O repositório é um **workspace NPM** com dois módulos: `backend/` (API REST) e `frontend/` (SPA React).
+O **EnterLinhas** é uma plataforma fullstack de publicação colaborativa de posts/artigos (blog literário e de artigos) com fluxo editorial: **escritores** criam rascunhos e enviam para revisão, **editores** aprovam/rejeitam/publicam, e **administradores** têm controle total (incluindo taxonomias). O repositório é um **workspace NPM** com dois módulos: `backend/` (API REST) e `frontend/` (SPA React).
 
 ## 2. Stack e dependências principais
 
@@ -33,12 +33,12 @@ O **heintrelinhas** é uma plataforma fullstack de publicação colaborativa de 
 ## 3. Estrutura de pastas comentada
 
 ```
-Heintrelinhas/
+EnterLinhas/
 ├── package.json              # Workspace NPM (workspaces: frontend, backend) + scripts agregados
 ├── README.md                 # Instruções de instalação/uso (inclui usuários de teste do seed)
 ├── backend/
 │   ├── .env                  # Variáveis de ambiente (NÃO commitar segredos)
-│   ├── docker-compose.yml    # Container PostgreSQL (porta 5432, db heintrelinhas_db)
+│   ├── docker-compose.yml    # Container PostgreSQL (porta 5432, db enterlinhas_db)
 │   ├── prisma/
 │   │   ├── schema.prisma     # Modelos: User, Post, Category, Tag + enums Role e PostStatus
 │   │   └── seed.ts           # Popula usuários de teste, categorias, tags e posts de exemplo
@@ -104,9 +104,9 @@ Frontend (build Vite):
 - `VITE_API_URL` — URL base da API (padrão `http://localhost:3333` se ausente).
 
 ### Usuários de teste (criados pelo seed)
-- `admin@heintrelinhas.com` / `admin123` (ADMIN)
-- `editor@heintrelinhas.com` / `editor123` (EDITOR)
-- `writer@heintrelinhas.com` / `writer123` (WRITER)
+- `admin@enterlinhas.com` / `admin123` (ADMIN)
+- `editor@enterlinhas.com` / `editor123` (EDITOR)
+- `writer@enterlinhas.com` / `writer123` (WRITER)
 
 ## 5. Funcionalidades
 
@@ -120,7 +120,7 @@ Frontend (build Vite):
 6. **Listagem pública com filtros** — Home lista posts com filtros por categoria, tag e status (server-side via query params) e busca textual por título/resumo + ordenação (client-side).
 7. **Visibilidade condicionada ao papel** — as rotas `GET /api/posts` e `GET /api/posts/:idOrSlug` são públicas, mas decodificam o JWT opcionalmente: anônimos veem só `PUBLISHED`; WRITER vê `PUBLISHED` + os próprios; EDITOR/ADMIN veem tudo.
 8. **Painel administrativo** — página `/admin` (ADMIN/EDITOR) com CRUD inline de categorias e tags.
-9. **Tema claro/escuro** — alternado no Layout, persistido em `localStorage` (`@heintrelinhas:theme`), aplicado via classe `dark-theme` no `<html>`.
+9. **Tema claro/escuro** — alternado no Layout, persistido em `localStorage` (`@enterlinhas:theme`), aplicado via classe `dark-theme` no `<html>`.
 10. **"Copilot" (chat mockado)** — painel lateral de chat no Layout que simula um assistente de IA com respostas fixas baseadas em palavras-chave. **Não há integração real com IA/LLM.**
 
 ## 6. Como os sistemas funcionam
@@ -133,7 +133,7 @@ React (páginas) → axios (services/api.ts, injeta "Authorization: Bearer <toke
   → controllers (validação Zod + regras de negócio) → Prisma → PostgreSQL
 ```
 
-- O token e o perfil do usuário são persistidos no `localStorage` sob as chaves `@heintrelinhas:token` e `@heintrelinhas:user`; o `AuthContext` recarrega esse estado ao montar a aplicação.
+- O token e o perfil do usuário são persistidos no `localStorage` sob as chaves `@enterlinhas:token` e `@enterlinhas:user`; o `AuthContext` recarrega esse estado ao montar a aplicação.
 - Não há refresh token: expirado o JWT (7 dias), o usuário precisa logar novamente. Também não há interceptor de resposta para 401 — chamadas falhas exibem erro nas páginas.
 
 ### 6.2 Rotas da API (prefixos registrados em `app.ts`)
@@ -191,7 +191,7 @@ Erros seguem o padrão `{ message: string }`; validação Zod retorna 400 com `{
 - Arquivos backend nomeados por recurso e camada: `*-routes.ts`, `*-controller.ts`, `*-schemas.ts`.
 - Imports internos do backend usam extensão `.js` (padrão ESM/TS com `moduleResolution` NodeNext).
 - Mensagens de erro da API e textos da UI em português do Brasil.
-- Chaves de `localStorage` prefixadas com `@heintrelinhas:`.
+- Chaves de `localStorage` prefixadas com `@enterlinhas:`.
 - Frontend usa muito estilo inline + classes utilitárias globais (`glass-card`, `btn`, `form-control`, `badge`, `flex-center` etc. definidas nos CSS globais).
 
 **Pontos de atenção**

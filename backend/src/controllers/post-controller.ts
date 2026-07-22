@@ -123,11 +123,14 @@ export async function listPosts(request: FastifyRequest, reply: FastifyReply) {
       }
     }
 
-    const { authorId, categoryId, tagId, status } = request.query as {
+    const { authorId, categoryId, tagId, status, search, page, perPage } = request.query as {
       authorId?: string;
       categoryId?: string;
       tagId?: string;
       status?: string;
+      search?: string;
+      page?: string;
+      perPage?: string;
     };
 
     const where: any = {};
@@ -186,19 +189,42 @@ export async function listPosts(request: FastifyRequest, reply: FastifyReply) {
       }
     }
 
-    const posts = await prisma.post.findMany({
-      where,
-      include: {
-        category: true,
-        tags: true,
-        author: {
-          select: { id: true, name: true, email: true, role: true },
+    // 3. Busca textual por título/resumo (case-insensitive). Entra em AND para
+    // não interferir no OR de visibilidade do WRITER montado acima.
+    if (search?.trim()) {
+      const term = search.trim();
+      where.AND = [
+        {
+          OR: [
+            { title: { contains: term, mode: 'insensitive' } },
+            { summary: { contains: term, mode: 'insensitive' } },
+          ],
         },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+      ];
+    }
 
-    return reply.status(200).send(posts);
+    // 4. Paginação: página 1 e 10 itens por padrão; perPage limitado a 50.
+    const currentPage = Math.max(1, Number(page) || 1);
+    const pageSize = Math.min(50, Math.max(1, Number(perPage) || 10));
+
+    const [total, posts] = await prisma.$transaction([
+      prisma.post.count({ where }),
+      prisma.post.findMany({
+        where,
+        include: {
+          category: true,
+          tags: true,
+          author: {
+            select: { id: true, name: true, email: true, role: true },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+        skip: (currentPage - 1) * pageSize,
+        take: pageSize,
+      }),
+    ]);
+
+    return reply.status(200).send({ data: posts, total, page: currentPage, perPage: pageSize });
   } catch (error) {
     return reply.status(500).send({ message: 'Erro interno do servidor.' });
   }

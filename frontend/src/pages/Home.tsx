@@ -69,6 +69,12 @@ export const Home: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState('');
   const [sortBy, setSortBy] = useState<'date' | 'title' | 'readingTime'>('date');
 
+  // Paginação server-side: a API retorna { data, total, page, perPage }.
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const PER_PAGE = 10;
+  const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+
   // Carrega categorias e tags em paralelo para montar a sidebar de filtros.
   const fetchFilters = async () => {
     try {
@@ -87,26 +93,17 @@ export const Home: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const params: any = {};
+      const params: any = { page, perPage: PER_PAGE };
       if (selectedCategory) params.categoryId = selectedCategory;
       if (selectedTag) params.tagId = selectedTag;
       if (selectedStatus) params.status = selectedStatus;
+      if (search.trim()) params.search = search.trim();
 
+      // Filtros e busca textual são todos server-side; a resposta vem paginada.
       const response = await api.get('/api/posts', { params });
 
-      // Client-side text filter for search query (on title / summary)
-      // A API não possui busca textual, então o filtro por título/resumo
-      // é aplicado aqui, sobre o resultado já filtrado pelo servidor.
-      let data = response.data;
-      if (search.trim()) {
-        const query = search.toLowerCase();
-        data = data.filter((post: any) => 
-          post.title.toLowerCase().includes(query) || 
-          post.summary.toLowerCase().includes(query)
-        );
-      }
-
-      setPosts(data);
+      setPosts(response.data.data);
+      setTotal(response.data.total);
     } catch (err: any) {
       console.error('Erro ao buscar posts:', err);
       setError('Não foi possível carregar as publicações.');
@@ -119,11 +116,15 @@ export const Home: React.FC = () => {
     fetchFilters();
   }, []);
 
-  // Rebusca os posts sempre que qualquer filtro muda (inclusive a busca textual,
-  // que refaz a chamada mesmo sendo filtrada no cliente).
+  // Qualquer mudança de filtro volta para a primeira página.
+  useEffect(() => {
+    setPage(1);
+  }, [selectedCategory, selectedTag, selectedStatus, search]);
+
+  // Rebusca os posts sempre que qualquer filtro ou a página muda.
   useEffect(() => {
     fetchPosts();
-  }, [selectedCategory, selectedTag, selectedStatus, search]);
+  }, [selectedCategory, selectedTag, selectedStatus, search, page]);
 
   const handleResetFilters = () => {
     setSearch('');
@@ -131,6 +132,7 @@ export const Home: React.FC = () => {
     setSelectedTag('');
     setSelectedStatus('');
     setSortBy('date');
+    setPage(1);
   };
 
   // Filter out recent posts (folders) - top 4 published or drafts
@@ -197,7 +199,7 @@ export const Home: React.FC = () => {
           >
             <SlidersHorizontal size={16} />
             <span>Tudo</span>
-            <span className="count-badge">{posts.length}</span>
+            <span className="count-badge">{total}</span>
           </div>
         </div>
 
@@ -263,7 +265,7 @@ export const Home: React.FC = () => {
             <h2>Participe do projeto</h2>
             <p>
               Tudo o que estiver aqui é lido pelo agente antes de responder. Adicione
-              documentos e textos literários para refinar a inteligência coletiva do heintrelinhas.
+              documentos e textos literários para refinar a inteligência coletiva do EnterLinhas.
             </p>
             <Link to={user ? "/new-post" : "/login"} className="hero-cta-btn">
               <Plus size={16} />
@@ -381,6 +383,29 @@ export const Home: React.FC = () => {
               })
             )}
           </div>
+
+          {/* Paginação (server-side) */}
+          {!loading && !error && totalPages > 1 && (
+            <div className="flex-center" style={{ gap: '16px', padding: '24px 0 8px' }}>
+              <button
+                className="btn"
+                disabled={page === 1}
+                onClick={() => setPage(page - 1)}
+              >
+                Anterior
+              </button>
+              <span style={{ fontSize: '0.875rem', color: 'hsl(var(--text-secondary))' }}>
+                Página {page} de {totalPages}
+              </span>
+              <button
+                className="btn"
+                disabled={page === totalPages}
+                onClick={() => setPage(page + 1)}
+              >
+                Próxima
+              </button>
+            </div>
+          )}
         </section>
       </div>
     </div>

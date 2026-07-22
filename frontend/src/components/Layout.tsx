@@ -36,7 +36,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   const location = useLocation();
   
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    const saved = localStorage.getItem('@heintrelinhas:theme');
+    const saved = localStorage.getItem('@enterlinhas:theme');
     if (saved === 'dark' || saved === 'light') return saved;
     return 'light'; // default
   });
@@ -52,7 +52,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     } else {
       document.documentElement.classList.remove('dark-theme');
     }
-    localStorage.setItem('@heintrelinhas:theme', theme);
+    localStorage.setItem('@enterlinhas:theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {
@@ -63,7 +63,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: 'ai',
-      text: 'Olá! Sou o Copilot do heintrelinhas. Pergunte-me sobre publicações recentes, temas de leitura ou como participar do projeto!',
+      text: 'Olá! Sou o Copilot do EnterLinhas. Pergunte-me sobre publicações recentes, temas de leitura ou como participar do projeto!',
       timestamp: new Date()
     }
   ]);
@@ -95,12 +95,12 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     // O setTimeout de 800ms simula a latência de "digitação" de uma IA real;
     // a resposta é apenas texto fixo escolhido pelas palavras-chave da pergunta.
     setTimeout(() => {
-      let replyText = 'Entendi! Atualmente o heintrelinhas conta com seções de Tecnologia, Literatura, Ciência, Design e Filosofia. Você pode publicar novos textos se cadastrando como autor.';
+      let replyText = 'Entendi! Atualmente o EnterLinhas conta com seções de Tecnologia, Literatura, Ciência, Design e Filosofia. Você pode publicar novos textos se cadastrando como autor.';
       
       if (prompt.includes('olá') || prompt.includes('oi')) {
-        replyText = 'Olá! Como posso te ajudar hoje? Posso te sugerir leituras ou explicar as permissões de escrita do heintrelinhas.';
+        replyText = 'Olá! Como posso te ajudar hoje? Posso te sugerir leituras ou explicar as permissões de escrita do EnterLinhas.';
       } else if (prompt.includes('ajuda') || prompt.includes('como funciona')) {
-        replyText = 'O heintrelinhas é uma plataforma colaborativa. Escritores podem rascunhar posts, editores revisam e publicam, e administradores controlam todo o sistema.';
+        replyText = 'O EnterLinhas é uma plataforma colaborativa. Escritores podem rascunhar posts, editores revisam e publicam, e administradores controlam todo o sistema.';
       } else if (prompt.includes('admin') || prompt.includes('painel')) {
         replyText = 'O Painel Admin está acessível para usuários com função de ADMIN ou EDITOR através do ícone de engrenagem na barra esquerda.';
       } else if (prompt.includes('tecnologia') || prompt.includes('react')) {
@@ -216,7 +216,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       <div className="main-workspace">
         <header className="workspace-header glass">
           <div className="header-left">
-            <h2 className="workspace-title">heintrelinhas</h2>
+            <h2 className="workspace-title">EnterLinhas</h2>
           </div>
 
           <div className="header-actions">

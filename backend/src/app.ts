@@ -4,6 +4,7 @@
 import fastify from 'fastify';
 import cors from '@fastify/cors';
 import jwt from '@fastify/jwt';
+import cookie from '@fastify/cookie';
 import { authRoutes } from './routes/auth-routes.js';
 import { categoryRoutes } from './routes/category-routes.js';
 import { tagRoutes } from './routes/tag-routes.js';
@@ -14,9 +15,15 @@ export const app = fastify({
 });
 
 // Configure CORS
+// credentials: true permite que o navegador envie o cookie httpOnly de
+// refresh token nas chamadas a /api/auth/* (axios com withCredentials).
 app.register(cors, {
   origin: true, // In production, replace with specific frontend URL
+  credentials: true,
 });
+
+// Cookies (usados apenas pelo refresh token httpOnly das rotas de auth).
+app.register(cookie);
 
 // Configure JWT
 // Falha rápido na inicialização se o segredo do JWT não estiver definido —

@@ -1,7 +1,7 @@
 {
-  "name": "heintrelinhas-backend",
+  "name": "enterlinhas-backend",
   "version": "1.0.0",
-  "description": "Backend API for heintrelinhas using Fastify, Prisma, PostgreSQL and TypeScript",
+  "description": "Backend API for EnterLinhas using Fastify, Prisma, PostgreSQL and TypeScript",
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
@@ -15,13 +15,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fastify/cookie": "^9.4.0",
     "@fastify/cors": "^9.0.1",
     "@fastify/jwt": "^8.0.1",
     "@prisma/client": "^5.16.1",
     "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
     "fastify": "^4.28.1",
-    "zod": "^3.23.8",
-    "dotenv": "^16.4.5"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

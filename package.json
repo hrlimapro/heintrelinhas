@@ -1,8 +1,8 @@
 {
-  "name": "heintrelinhas-workspace",
+  "name": "enterlinhas-workspace",
   "version": "1.0.0",
   "private": true,
-  "description": "heintrelinhas Workspace (React + Fastify + Prisma + PostgreSQL)",
+  "description": "EnterLinhas Workspace (React + Fastify + Prisma + PostgreSQL)",
   "workspaces": [
     "frontend",
     "backend"

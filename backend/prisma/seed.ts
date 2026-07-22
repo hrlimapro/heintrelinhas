@@ -26,7 +26,7 @@ async function main() {
   const admin = await prisma.user.create({
     data: {
       name: 'Henrique Administrador',
-      email: 'admin@heintrelinhas.com',
+      email: 'admin@enterlinhas.com',
       passwordHash: adminPasswordHash,
       role: Role.ADMIN,
     },
@@ -36,7 +36,7 @@ async function main() {
   const editor = await prisma.user.create({
     data: {
       name: 'Paula Editora',
-      email: 'editor@heintrelinhas.com',
+      email: 'editor@enterlinhas.com',
       passwordHash: editorPasswordHash,
       role: Role.EDITOR,
     },
@@ -46,16 +46,16 @@ async function main() {
   const writer = await prisma.user.create({
     data: {
       name: 'Carlos Escritor',
-      email: 'writer@heintrelinhas.com',
+      email: 'writer@enterlinhas.com',
       passwordHash: writerPasswordHash,
       role: Role.WRITER,
     },
   });
 
   console.log(`✅ Usuários criados:
-    - Admin: admin@heintrelinhas.com / admin123
-    - Editor: editor@heintrelinhas.com / editor123
-    - Escritor: writer@heintrelinhas.com / writer123`);
+    - Admin: admin@enterlinhas.com / admin123
+    - Editor: editor@enterlinhas.com / editor123
+    - Escritor: writer@enterlinhas.com / writer123`);
 
   // 3. Criar Categorias
   console.log('🏷️ Criando categorias...');

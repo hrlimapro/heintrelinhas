@@ -1,19 +1,17 @@
 // Página de cadastro: cria a conta via signUp do AuthContext
 // (POST /api/auth/register) e, em caso de sucesso, exibe confirmação e
 // redireciona para /login após 2s (o cadastro NÃO autentica automaticamente).
-// Observação: o seletor de "Nível de Acesso" permite escolher qualquer papel,
-// inclusive ADMIN — comportamento intencional apenas para fins de demonstração.
+// Todo cadastro nasce como WRITER — contas EDITOR/ADMIN vêm do seed.
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext.js';
-import { UserPlus, User, Mail, Key, Shield, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { UserPlus, User, Mail, Key, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 export const Register: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState<'WRITER' | 'EDITOR' | 'ADMIN'>('WRITER');
-  
+
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,7 +25,7 @@ export const Register: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      await signUp({ name, email, password, role });
+      await signUp({ name, email, password });
       setSuccess(true);
       setTimeout(() => {
         navigate('/login');
@@ -57,7 +55,7 @@ export const Register: React.FC = () => {
           </div>
           <h2 style={{ fontSize: '1.75rem', color: 'hsl(var(--text-primary))', marginBottom: '8px' }}>Criar Nova Conta</h2>
           <p style={{ fontSize: '0.9rem', color: 'hsl(var(--text-secondary))' }}>
-            Junte-se à comunidade do heintrelinhas.
+            Junte-se à comunidade do EnterLinhas.
           </p>
         </div>
 
@@ -146,7 +144,7 @@ export const Register: React.FC = () => {
             </div>
           </div>
 
-          <div className="form-group">
+          <div className="form-group" style={{ marginBottom: '28px' }}>
             <label className="form-label" htmlFor="password">Sua Senha</label>
             <div style={{ position: 'relative' }}>
               <Key size={18} style={{
@@ -167,40 +165,6 @@ export const Register: React.FC = () => {
                 style={{ paddingLeft: '44px' }}
                 disabled={isSubmitting || success}
               />
-            </div>
-          </div>
-
-          <div className="form-group" style={{ marginBottom: '28px' }}>
-            <label className="form-label" htmlFor="role">Nível de Acesso (Cargo)</label>
-            <div style={{ position: 'relative' }}>
-              <Shield size={18} style={{
-                position: 'absolute',
-                left: '14px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: 'hsl(var(--text-muted))'
-              }} />
-              <select
-                id="role"
-                className="form-control"
-                value={role}
-                onChange={(e) => setRole(e.target.value as any)}
-                style={{ paddingLeft: '44px', appearance: 'none', background: 'rgba(15, 23, 42, 0.6)' }}
-                disabled={isSubmitting || success}
-              >
-                <option value="WRITER">Escritor / Autor (Gera Posts e Rascunhos)</option>
-                <option value="EDITOR">Editor (Aprova, Edita e Publica todos)</option>
-                <option value="ADMIN">Administrador (Controle Total + Categorias/Tags)</option>
-              </select>
-              <div style={{
-                position: 'absolute',
-                right: '16px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                pointerEvents: 'none',
-                color: 'hsl(var(--text-muted))',
-                fontSize: '0.8rem'
-              }}>▼</div>
             </div>
           </div>
 

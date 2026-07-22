@@ -1,5 +1,5 @@
 // Contexto global de autenticação: mantém usuário/token em memória e sincronizado
-// com o localStorage (chaves "@heintrelinhas:token" e "@heintrelinhas:user"),
+// com o localStorage (chaves "@enterlinhas:token" e "@enterlinhas:user"),
 // permitindo que a sessão sobreviva a recarregamentos da página.
 // O token em si é injetado nas requisições pelo interceptor em services/api.ts.
 import React, { createContext, useContext, useState, useEffect } from 'react';
@@ -17,7 +17,7 @@ interface AuthContextData {
   token: string | null;
   loading: boolean;
   signIn: (credentials: { email: string; password: string }) => Promise<void>;
-  signUp: (data: { name: string; email: string; password: string; role: 'WRITER' | 'EDITOR' | 'ADMIN' }) => Promise<void>;
+  signUp: (data: { name: string; email: string; password: string }) => Promise<void>;
   signOut: () => void;
 }
 
@@ -32,8 +32,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // O flag "loading" evita que rotas privadas redirecionem antes dessa leitura.
   useEffect(() => {
     function loadStorageData() {
-      const storagedToken = localStorage.getItem('@heintrelinhas:token');
-      const storagedUser = localStorage.getItem('@heintrelinhas:user');
+      const storagedToken = localStorage.getItem('@enterlinhas:token');
+      const storagedUser = localStorage.getItem('@enterlinhas:user');
 
       if (storagedToken && storagedUser) {
         setToken(storagedToken);
@@ -50,23 +50,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const response = await api.post('/api/auth/login', { email, password });
     const { token: jwtToken, user: userProfile } = response.data;
 
-    localStorage.setItem('@heintrelinhas:token', jwtToken);
-    localStorage.setItem('@heintrelinhas:user', JSON.stringify(userProfile));
+    localStorage.setItem('@enterlinhas:token', jwtToken);
+    localStorage.setItem('@enterlinhas:user', JSON.stringify(userProfile));
 
     setToken(jwtToken);
     setUser(userProfile);
   };
 
-  // Cadastro: apenas cria a conta; NÃO autentica automaticamente
-  // (a página Register redireciona para /login após o sucesso).
-  const signUp = async ({ name, email, password, role }: any) => {
-    await api.post('/api/auth/register', { name, email, password, role });
+  // Cadastro: apenas cria a conta (sempre como WRITER); NÃO autentica
+  // automaticamente (a página Register redireciona para /login após o sucesso).
+  const signUp = async ({ name, email, password }: any) => {
+    await api.post('/api/auth/register', { name, email, password });
   };
 
-  // Logout: limpa o armazenamento persistente e o estado em memória.
+  // Logout: revoga o refresh token no servidor (fire-and-forget) e limpa
+  // o armazenamento persistente e o estado em memória.
   const signOut = () => {
-    localStorage.removeItem('@heintrelinhas:token');
-    localStorage.removeItem('@heintrelinhas:user');
+    api.post('/api/auth/logout').catch(() => {});
+    localStorage.removeItem('@enterlinhas:token');
+    localStorage.removeItem('@enterlinhas:user');
     setToken(null);
     setUser(null);
   };
